@@ -19,36 +19,33 @@ public class MainActivity extends AppCompatActivity {
  */
 
 
-
-
-//для отслеживания состояния секундомера создаем две переменные
+    //для отслеживания состояния секундомера создаем две переменные
     private int seconds = 0; //хранит кол-во прошедших секунд
     private int milliseconds = 0;
     private boolean isRunning = false; //запущен секундомер или нет
     private boolean isRunningMillSecs = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textViewTimer = findViewById(R.id.textViewTimer);//присваиваем значение переменной textViewTimer значение поля из  R.id.textViewTimer
-    runTimer();
+        runTimer();
         textViewMilSecs = findViewById(R.id.textViewMilSecs);
         runTimerMillSecs();
     }
 
-    private void runTimerMillSecs() {
-        isRunningMillSecs = true;
-    }
+
 
 
     public void onClickStartTimer(View view) {
         isRunning = true;//когда юзер тыкает Пуск нужно isRunning присвоить true
-    isRunningMillSecs=true;
+        isRunningMillSecs = true;
     }
 
     public void onClickStopTimer(View view) {
         isRunning = false;//а когда тыкает Стоп - присвоить ей false
-   isRunningMillSecs = false;
+        isRunningMillSecs = false;
     }
 
     public void onClickResetTimer(View view) {
@@ -58,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
         milliseconds = 0;
         //milliseconds = 0;//нужно обнулить счетчик Таймера при Сбросе
     }
+
     private void runTimer() {//для обновления показаний секундомера используем метод runTimer
         final Handler handler = new Handler();//создаем объект handler
         handler.post(new Runnable() //выхываем метод post у handler и говорим "вызови сразу следующий код"
@@ -80,21 +78,23 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-//          private  void runTimerMillSecs() {
-//                final Handler handler1 = new Handler();
-//                handler1.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                        int millisecs = milliseconds % 1000;
-//                        String timeMillSecs = String.format(Locale.getDefault(), "%03d", millisecs);
-//                        textViewMilSecs.setText(timeMillSecs);
-//                        if (isRunning) {
-//                            milliseconds++;
-//                        }
-//                        handler1.postDelayed(this::run, 1);
-//                    }
-//                }
+    private void runTimerMillSecs() {
+        final Handler handler1 = new Handler();
+        handler1.post(new Runnable() {
+            @Override
+            public void run() {
+
+                int millisecs = milliseconds % 1000;
+                String timeMillSecs = String.format(Locale.getDefault(), "%03d", millisecs);
+                textViewMilSecs.setText(timeMillSecs);
+                if (isRunning) {
+                    milliseconds++;
+                }
+                handler1.postDelayed(this::run, 1);
+            }
+        });
+    }
+}
 
 
 
