@@ -1,7 +1,10 @@
 package com.example.stopwatch;
-
+/*
+При запуске runTimer мы создаем объект типа Handler, у этого объекта вызываем
+метод post,в котором говорим "выполни мгновенно следующий метод run".
+ */
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -9,56 +12,64 @@ import android.widget.TextView;
 
 import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+
+{
     //для доступа к элементу TextView нужно создать для него переменную
     private TextView textViewTimer;
     private TextView textViewMilSecs;
-/*
-При запуске runTimer мы создаем объект типа Handler, у этого объекта вызываем
-метод post,в котором говорим "выполни мгновенно следующий метод run".
- */
-
-
-
-
-//для отслеживания состояния секундомера создаем две переменные
+    //для отслеживания состояния секундомера создаем две переменные
     private int seconds = 0; //хранит кол-во прошедших секунд
     private int milliseconds = 0;
     private boolean isRunning = false; //запущен секундомер или нет
     private boolean isRunningMillSecs = false;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    //всегда переопределяем метод onCreate, чтобы сообщить какой макет испльзовать текущей активности
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);//установка макета приложения
+        if(savedInstanceState != null)
+        {
+            seconds = savedInstanceState.getInt("seconds");
+            milliseconds = savedInstanceState.getInt("milliseconds");
+            isRunning = savedInstanceState.getBoolean("isRunning");
+        }
         textViewTimer = findViewById(R.id.textViewTimer);//присваиваем значение переменной textViewTimer значение поля из  R.id.textViewTimer
-    runTimer();
+        runTimer();
         textViewMilSecs = findViewById(R.id.textViewMilSecs);
         runTimerMillSecs();
     }
 
-    private void runTimerMillSecs() {
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState)
+    {
+        super.onSaveInstanceState(outState);
+        outState.putInt("seconds",seconds);
+        outState.putInt("milliseconds",milliseconds);
+        outState.putBoolean("isRunning",isRunning);
+    }
+
+    public void onClickStartTimer(View view)
+    {
+        isRunning = true;//когда юзер тыкает Пуск нужно isRunning присвоить true
         isRunningMillSecs = true;
     }
-
-
-    public void onClickStartTimer(View view) {
-        isRunning = true;//когда юзер тыкает Пуск нужно isRunning присвоить true
-    isRunningMillSecs=true;
-    }
-
-    public void onClickStopTimer(View view) {
+    public void onClickStopTimer(View view)
+    {
         isRunning = false;//а когда тыкает Стоп - присвоить ей false
-   isRunningMillSecs = false;
+        isRunningMillSecs = false;
     }
-
-    public void onClickResetTimer(View view) {
+    public void onClickResetTimer(View view)
+    {
         isRunning = false;//когда тыкает Cброс - тоже присвоить ей false
         isRunningMillSecs = false;
         seconds = 0;
         milliseconds = 0;
         //milliseconds = 0;//нужно обнулить счетчик Таймера при Сбросе
     }
-    private void runTimer() {//для обновления показаний секундомера используем метод runTimer
+    private void runTimer()
+    {//для обновления показаний секундомера используем метод runTimer
         final Handler handler = new Handler();//создаем объект handler
         handler.post(new Runnable() //выхываем метод post у handler и говорим "вызови сразу следующий код"
         {
@@ -79,26 +90,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+    private void runTimerMillSecs()
+    {
+        final Handler handler1 = new Handler();
+        handler1.post(new Runnable() {
+            @Override
+            public void run() {
 
-//          private  void runTimerMillSecs() {
-//                final Handler handler1 = new Handler();
-//                handler1.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                        int millisecs = milliseconds % 1000;
-//                        String timeMillSecs = String.format(Locale.getDefault(), "%03d", millisecs);
-//                        textViewMilSecs.setText(timeMillSecs);
-//                        if (isRunning) {
-//                            milliseconds++;
-//                        }
-//                        handler1.postDelayed(this::run, 1);
-//                    }
-//                }
-
-
-
-
+                int millisecs = milliseconds % 1000;
+                String timeMillSecs = String.format(Locale.getDefault(), "%03d", millisecs);
+                textViewMilSecs.setText(timeMillSecs);
+                if (isRunning) {
+                    milliseconds++;
+                }
+                handler1.postDelayed(this::run, 1);
+            }
+        });
+    }
+}
 
 
 
